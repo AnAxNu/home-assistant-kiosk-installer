@@ -7,6 +7,13 @@ USER_HOME="$(getent passwd $SUDO_USER | cut -d: -f6)" #home dir of the user behi
 HA_KIOSK_DIR="${USER_HOME}/home-assistant-kiosk"
 HA_KIOSK_REPRO=https://github.com/AnAxNu/home-assistant-kiosk/archive/refs/heads/master.zip
 DEBIAN_VERSION="$(lsb_release -rs)"
+EXTRA_PACKAGES=""
+
+# need an extra package in Debian 12
+if [ $((DEBIAN_VERSION)) -gt 11 ]
+then
+  EXTRA_PACKAGES="gldriver-test"
+fi
 
 echo
 echo "This script installs Home Assistant Kiosk, that use Firefox, "
@@ -14,8 +21,7 @@ echo "in the following directory:"
 echo $HA_KIOSK_DIR
 echo
 echo "Currently this is only tested, and working, on"
-echo "Debian 11 (Bullseye)."
-echo "It DOES NOT work on Debian 12 (Bookworm)."
+echo "Debian 11 (Bullseye) and Debian 12 (Bookworm)."
 echo "You are currently running Debian $DEBIAN_VERSION."
 echo 
 echo "EXISTING INSTALLATION, IF ANY, WILL BE OVERWRITTEN."
@@ -57,7 +63,7 @@ echo
 
 echo "Installing software..."
 echo "**********************"
-apt -y install xserver-xorg x11-xserver-utils xinit openbox firefox-esr git php8.3-common php8.3-cli php8.3-curl php8.3-zip
+apt -y install xserver-xorg x11-xserver-utils xinit openbox firefox-esr git php8.3-common php8.3-cli php8.3-curl php8.3-zip $EXTRA_PACKAGES
 echo
 
 echo "Setting boot behaviour B2 in raspi-config..."
